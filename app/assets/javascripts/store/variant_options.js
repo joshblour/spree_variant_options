@@ -54,13 +54,29 @@ function VariantOptions(params) {
 
     if (default_instock) {
       divs.each(function(){
-        $(this).find(".variant-option-values .in-stock:first").click();
+        var selected = decodeURIComponent(urlParam('selected'))
+        var option = $(this).find(".option-value[title='"+ selected + "']:first")
+        if (option.length > 0) {
+          option.first().click();
+        } else{
+          $(this).find(".option-value.in-stock:first").click();
+        }
       });
     }
     // init_images( options, img_key );
     // show_all_variant_images( options, img_key );
   }
-
+  
+  function urlParam(name) {
+      var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+      if (results==null){
+         return null;
+      }
+      else{
+         return results[1] || 0;
+      }
+  }
+  
   function get_index(parent) {
     return parseInt($(parent).attr('class').replace(/[^\d]/g, ''));
   }
