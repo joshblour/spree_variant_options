@@ -54,8 +54,10 @@ function VariantOptions(params) {
 
     if (default_instock) {
       divs.each(function(){
-        var selected = decodeURIComponent(urlParam('selected'))
-        var option = $(this).find(".option-value[title='"+ selected + "']:first")
+        var selected = decodeURIComponent(urlParam('selected')).toLowerCase().replace(/ /g,".").replace(/[^a-zA-Z0-9\.]+/g,"");
+        var option = $('.option-value[title]').filter(function() {
+                    return this.title.toLowerCase().replace(/ /g,".").replace(/[^a-zA-Z0-9\.]+/g,"") == selected;
+                  });
         if (option.length > 0) {
           option.first().click();
         } else{
