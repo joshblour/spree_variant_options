@@ -14,7 +14,7 @@ Spree::Product.class_eval do
     @_variant_option_values.select { |i| i.option_value_ids.include?(value.id) }
   end
 
-  def variant_options_hash
+  def variant_options_hash(current_currency = self.currency)
     return @_variant_options_hash if @_variant_options_hash
     hash = {}
     variants.includes(:option_values).each do |variant|
@@ -23,7 +23,7 @@ Spree::Product.class_eval do
         ovid = ov.id.to_s
         hash[otid] ||= {}
         hash[otid][ovid] ||= {}
-        hash[otid][ovid][variant.id.to_s] = variant.to_hash
+        hash[otid][ovid][variant.id.to_s] = variant.to_hash(current_currency)
       end
     end
     @_variant_options_hash = hash

@@ -2,8 +2,8 @@ Spree::Variant.class_eval do
 
   include ActionView::Helpers::NumberHelper
 
-  def to_hash
-    actual_price  = self.price
+  def to_hash(currency)
+    actual_price  = self.price_in(currency).price
     #actual_price += Calculator::Vat.calculate_tax_on(self) if Spree::Config[:show_price_inc_vat]
     {
       :id    => self.id,
