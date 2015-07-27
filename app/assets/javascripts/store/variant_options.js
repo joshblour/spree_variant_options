@@ -31,18 +31,19 @@ if (!Array.find_matches) Array.find_matches = function(a) {
 }
 
 function VariantOptions(params) {
-
+  var current_currency, test
   var options = params['options'];
   var i18n = params['i18n'];
   var allow_backorders = !params['track_inventory_levels'];
   var allow_select_outofstock = params['allow_select_outofstock'];
   var default_instock = params['default_instock'];
+  var current_currency = params['current_currency'];
 
   var variant, divs, parent, index = 0;
   var selection = [];
   var buttons;
   var img_key = params[ 'image_key' ];
-
+    
   function init() {
     divs = $('#product-variants .variant-options');
     disable(divs.find('.option-value').addClass('locked'));
@@ -53,13 +54,29 @@ function VariantOptions(params) {
 
     if (default_instock) {
       divs.each(function(){
-        $(this).find(".variant-option-values .in-stock:first").click();
+        var selected = decodeURIComponent(urlParam('selected'))
+        var option = $(this).find(".option-value[title='"+ selected + "']:first")
+        if (option.length > 0) {
+          option.first().click();
+        } else{
+          $(this).find(".option-value.in-stock:first").click();
+        }
       });
     }
     // init_images( options, img_key );
     // show_all_variant_images( options, img_key );
   }
-
+  
+  function urlParam(name) {
+      var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+      if (results==null){
+         return null;
+      }
+      else{
+         return results[1] || 0;
+      }
+  }
+  
   function get_index(parent) {
     return parseInt($(parent).attr('class').replace(/[^\d]/g, ''));
   }
@@ -185,15 +202,10 @@ function VariantOptions(params) {
     if (variant) {
       $('#variant_id, form[data-form-type="variant"] input[name$="[variant_id]"]').val(variant.id);
       $('#product-price .price').removeClass('unselected').text(variant.price);
-      $( '#product-price .price' ).text( variant.price );
+      $( '#product-price .price' ).text( variant.price + ' ' + current_currency );
       if (variant.in_stock)
         $('#cart-form button[type=submit]').attr('disabled', false).fadeTo(100, 1);
       $('form[data-form-type="variant"] button[type=submit]').attr('disabled', false).fadeTo(100, 1);
-      try {
-        // show_variant_images(variant.id);
-      } catch(error) {
-        // depends on modified version of product.js
-      }
     } else {
 
       if (variants) {
